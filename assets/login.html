@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0a0d22"><link rel="apple-touch-icon" href="/icon-192.png">
+<title>মুহাসিব</title>
+<!--STATE-->
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans Bengali","Kalpurush",sans-serif;color:#e8ebff;background:#0a0d22;
+ background-image:radial-gradient(380px 300px at 8% 10%,rgba(99,126,255,.30),transparent 70%),radial-gradient(340px 320px at 95% 55%,rgba(64,200,150,.20),transparent 70%),radial-gradient(360px 300px at 15% 95%,rgba(255,120,110,.16),transparent 70%);
+ display:flex;align-items:center;justify-content:center;padding:20px;padding-top:max(20px,env(safe-area-inset-top));padding-bottom:max(20px,env(safe-area-inset-bottom))}
+.box{width:100%;max-width:400px;background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.2);border-radius:22px;padding:22px 20px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 32px rgba(0,0,0,.4)}
+.logo{width:68px;height:68px;border-radius:18px;margin:0 auto 10px;display:block}
+h1{margin:0 0 2px;text-align:center;font-size:24px}
+.sub{margin:0 0 16px;text-align:center;color:#a9b0d6;font-size:14px}
+.tabs{display:flex;gap:6px;background:rgba(255,255,255,.08);border-radius:14px;padding:4px;margin-bottom:14px}
+.tabs button{flex:1;border:0;background:none;color:#a9b0d6;padding:9px;border-radius:11px;font:inherit}
+.tabs button.on{background:linear-gradient(135deg,#1546a8,#3b7bff);color:#fff;font-weight:600}
+label{display:block;font-size:13px;color:#a9b0d6;margin:10px 0 4px}
+input{width:100%;padding:12px 13px;border-radius:13px;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.28);color:#fff;font:inherit;outline:none}
+input:focus{border-color:#6c8fff}
+.pw{position:relative}.pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:0;color:#a9b0d6;font-size:18px;padding:6px 8px}
+.go{width:100%;margin-top:16px;padding:13px;border:0;border-radius:14px;background:linear-gradient(135deg,#1546a8,#3b7bff);color:#fff;font:inherit;font-weight:600;font-size:16px}
+.go:disabled{opacity:.6}
+.lnk{display:block;width:100%;margin-top:10px;background:none;border:0;color:#a9b0d6;font:inherit;padding:8px}
+.err{margin-top:12px;color:#ff8a8a;font-size:14px;text-align:center;min-height:0}
+.note{font-size:12.5px;color:#a9b0d6;margin-top:12px;text-align:center}
+.st{text-align:center;padding:6px 0 2px}.st .ic{font-size:46px;margin-bottom:6px}.st p{margin:6px 0;color:#cfd4f5}
+.pulse{animation:p 1.6s infinite}@keyframes p{50%{opacity:.35}}
+.lang{display:flex;justify-content:center;gap:8px;margin-top:14px}.lang button{background:none;border:1px solid rgba(255,255,255,.22);color:#a9b0d6;border-radius:999px;padding:4px 12px;font:inherit;font-size:13px}.lang button.on{background:rgba(255,255,255,.16);color:#fff}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="box">
+  <img class="logo" src="/icon-192.png" alt="">
+  <h1>মুহাসিব</h1>
+  <p class="sub" id="sub"></p>
+
+  <div id="auth" hidden>
+    <div class="tabs"><button id="tl" class="on" data-t="l"></button><button id="tr" data-t="r"></button></div>
+    <form id="f" autocomplete="on">
+      <div id="nmw" hidden><label id="lnm"></label><input id="nm" autocomplete="name" maxlength="60"></div>
+      <label id="lid"></label><input id="id" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false">
+      <label id="lpw"></label><div class="pw"><input id="pw" type="password" autocomplete="current-password"><button type="button" id="eye" aria-label="show">👁</button></div>
+      <div id="pw2w" hidden><label id="lpw2"></label><input id="pw2" type="password" autocomplete="new-password"></div>
+      <button class="go" id="go" type="submit"></button>
+      <div class="err" id="err" role="alert"></div>
+    </form>
+    <p class="note" id="note"></p>
+  </div>
+
+  <div id="wait" class="st" hidden>
+    <div class="ic pulse">⏳</div><h2 style="margin:0" id="wt"></h2>
+    <p id="wd"></p><p style="font-size:13px" id="wu"></p>
+    <button class="lnk" id="wlo"></button>
+  </div>
+  <div id="bad" class="st" hidden>
+    <div class="ic">⛔</div><h2 style="margin:0" id="bt"></h2><p id="bd"></p>
+    <button class="lnk" id="blo"></button>
+  </div>
+
+  <div class="lang"><button data-l="bn">বাংলা</button><button data-l="en">English</button></div>
+</div>
+<script>
+(function(){
+var T={
+bn:{sub:"আপনার দৈনিক হিসাবের সাথী",login:"লগইন",reg:"রেজিস্ট্রেশন",name:"আপনার নাম",id:"মোবাইল নাম্বার অথবা জিমেইল",pw:"পাসওয়ার্ড",pw2:"পাসওয়ার্ড আবার দিন",btnL:"লগইন করুন",btnR:"রেজিস্ট্রেশন করুন",
+ noteR:"রেজিস্ট্রেশনের পর আপনার রিকোয়েস্ট অ্যাডমিনের কাছে যাবে। অ্যাডমিন অনুমোদন দিলে তবেই অ্যাপ চালু হবে।",noteL:"নতুন হলে \"রেজিস্ট্রেশন\" ট্যাবে চাপুন।",
+ wt:"অনুমোদনের অপেক্ষায়",wd:"আপনার রিকোয়েস্ট অ্যাডমিনের কাছে পাঠানো হয়েছে। অনুমোদন পেলে অ্যাপ নিজে থেকেই চালু হবে।",lo:"লগ আউট",
+ bt1:"রিকোয়েস্ট বাতিল হয়েছে",bd1:"অ্যাডমিন আপনার রিকোয়েস্ট অনুমোদন করেননি। প্রয়োজনে অ্যাডমিনের সাথে যোগাযোগ করুন।",bt2:"অ্যাকাউন্ট বন্ধ",bd2:"আপনার অ্যাকাউন্টটি অ্যাডমিন বন্ধ করে দিয়েছেন।",
+ e_name:"নাম কমপক্ষে ২ অক্ষরের দিন।",e_ident:"সঠিক মোবাইল নাম্বার (০১XXXXXXXXX) অথবা ইমেইল দিন।",e_pw:"পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।",e_mismatch:"দুটি পাসওয়ার্ড মিলছে না।",
+ e_exists:"এই নাম্বার/ইমেইল দিয়ে আগেই রেজিস্ট্রেশন করা আছে। লগইন করুন।",e_bad:"আইডি বা পাসওয়ার্ড ভুল।",e_rate:"অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করুন।",e_net:"ইন্টারনেট সংযোগ নেই। অনলাইনে এসে আবার চেষ্টা করুন।",e_x:"কিছু একটা সমস্যা হয়েছে। আবার চেষ্টা করুন।",wait:"অপেক্ষা করুন…"},
+en:{sub:"Your daily accounts companion",login:"Login",reg:"Register",name:"Your name",id:"Mobile number or Gmail",pw:"Password",pw2:"Confirm password",btnL:"Log in",btnR:"Register",
+ noteR:"After registering, your request goes to the admin. The app starts only after the admin approves it.",noteL:"New here? Tap the \"Register\" tab.",
+ wt:"Waiting for approval",wd:"Your request has been sent to the admin. The app will start automatically once you are approved.",lo:"Log out",
+ bt1:"Request declined",bd1:"The admin did not approve your request. Please contact the admin if needed.",bt2:"Account suspended",bd2:"Your account has been suspended by the admin.",
+ e_name:"Enter a name of at least 2 characters.",e_ident:"Enter a valid mobile number (01XXXXXXXXX) or email.",e_pw:"Password must be at least 6 characters.",e_mismatch:"The two passwords do not match.",
+ e_exists:"This number/email is already registered. Please log in.",e_bad:"Wrong ID or password.",e_rate:"Too many attempts. Please try again later.",e_net:"No internet connection. Please go online and try again.",e_x:"Something went wrong. Please try again.",wait:"Please wait…"}
+};
+var L=localStorage.getItem("hisab-lang")==="en"?"en":"bn",mode="l",$=function(i){return document.getElementById(i)};
+function t(k){return T[L][k]}
+function draw(){
+  document.documentElement.lang=L;
+  $("sub").textContent=t("sub");$("tl").textContent=t("login");$("tr").textContent=t("reg");
+  $("lnm").textContent=t("name");$("lid").textContent=t("id");$("lpw").textContent=t("pw");$("lpw2").textContent=t("pw2");
+  $("go").textContent=t(mode=="l"?"btnL":"btnR");$("note").textContent=t(mode=="l"?"noteL":"noteR");
+  $("nmw").hidden=$("pw2w").hidden=mode=="l";
+  $("tl").classList.toggle("on",mode=="l");$("tr").classList.toggle("on",mode=="r");
+  $("pw").autocomplete=mode=="l"?"current-password":"new-password";
+  $("wt").textContent=t("wt");$("wd").textContent=t("wd");$("wlo").textContent=t("lo");$("blo").textContent=t("lo");
+  var S=window.MUH_STATE;
+  if(S){$("wu").textContent=(S.name||"")+" · "+(S.ident||"")}
+  if(S&&S.status=="rejected"){$("bt").textContent=t("bt1");$("bd").textContent=t("bd1")}
+  if(S&&S.status=="blocked"){$("bt").textContent=t("bt2");$("bd").textContent=t("bd2")}
+  [].forEach.call(document.querySelectorAll(".lang button"),function(b){b.classList.toggle("on",b.dataset.l==L)});
+}
+var S=window.MUH_STATE;
+$("auth").hidden=!!S;$("wait").hidden=!(S&&S.status=="pending");$("bad").hidden=!(S&&(S.status=="rejected"||S.status=="blocked"));
+draw();
+document.querySelector(".lang").onclick=function(e){var b=e.target.closest("[data-l]");if(!b)return;L=b.dataset.l;try{localStorage.setItem("hisab-lang",L)}catch(x){}draw()};
+document.querySelector(".tabs").onclick=function(e){var b=e.target.closest("[data-t]");if(!b)return;mode=b.dataset.t;$("err").textContent="";draw()};
+$("eye").onclick=function(){var p=$("pw");p.type=p.type=="password"?"text":"password"};
+function post(path,body){return fetch(path,{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify(body||{})}).then(function(r){return r.json().catch(function(){return{}}).then(function(j){j._s=r.status;return j})})}
+$("f").onsubmit=function(e){
+  e.preventDefault();var err=$("err");err.textContent="";
+  var id=$("id").value.trim(),pw=$("pw").value;
+  if(mode=="r"){
+    if($("nm").value.trim().length<2)return err.textContent=t("e_name");
+    if(!/@/.test(id)&&!/^[+০-৯0-9\s\-()]{8,20}$/.test(id))return err.textContent=t("e_ident");
+    if(pw.length<6)return err.textContent=t("e_pw");
+    if(pw!==$("pw2").value)return err.textContent=t("e_mismatch");
+  }
+  var go=$("go");go.disabled=true;var old=go.textContent;go.textContent=t("wait");
+  post(mode=="l"?"/api/login":"/api/register",mode=="l"?{id:id,password:pw}:{name:$("nm").value.trim(),id:id,password:pw}).then(function(j){
+    if(j.ok){location.reload();return}
+    go.disabled=false;go.textContent=old;
+    err.textContent=t("e_"+(j.error||"x"))||t("e_x");
+  }).catch(function(){go.disabled=false;go.textContent=old;err.textContent=t("e_net")});
+};
+function logout(){post("/api/logout").then(function(){location.reload()}).catch(function(){location.reload()})}
+$("wlo").onclick=logout;$("blo").onclick=logout;
+if(S&&S.status=="pending"){setInterval(function(){fetch("/api/me",{credentials:"same-origin"}).then(function(r){return r.json()}).then(function(j){if(j&&j.status&&j.status!="pending")location.reload()}).catch(function(){})},6000)}
+if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js").catch(function(){});
+})();
+</script>
+</body>
+</html>
