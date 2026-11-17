@@ -1,0 +1,26 @@
+name = "muhasib"
+main = "src/worker.js"
+compatibility_date = "2025-03-01"
+
+# অ্যাপ/লগইন পেজ/আইকন ইত্যাদি ফাইল। run_worker_first = true মানে প্রতিটি রিকোয়েস্ট আগে ওয়ার্কারের
+# হাত দিয়ে যায়, তাই assets/app.html (আসল অ্যাপ) শুধু অনুমোদিত ইউজারকেই দেওয়া হয়।
+[assets]
+directory = "./assets"
+binding = "ASSETS"
+run_worker_first = true
+html_handling = "none"
+not_found_handling = "none"
+
+# ডাটাবেস: `npx wrangler d1 create muhasib` চালিয়ে যে database_id পাবেন সেটা নিচে বসান
+[[d1_databases]]
+binding = "DB"
+database_name = "muhasib"
+database_id = "এখানে-D1-এর-database_id-বসান"
+
+[vars]
+ADMIN_NAME = "অ্যাডমিন"
+# ফ্রি প্ল্যানের CPU সীমার জন্য ৬০০০০। পেইড প্ল্যানে ১০০০০০ (সর্বোচ্চ) দিতে পারেন।
+PBKDF2_ITER = "60000"
+
+# গোপন তথ্য (ADMIN_ID, ADMIN_PASSWORD, ঐচ্ছিক TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID) এখানে লিখবেন না —
+# README অনুযায়ী `wrangler secret put` অথবা ড্যাশবোর্ডের Secrets দিয়ে দিন।

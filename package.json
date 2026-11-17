@@ -1,0 +1,13 @@
+{
+  "name": "muhasib-cloudflare",
+  "version": "1.0.0",
+  "private": true,
+  "description": "মুহাসিব — Cloudflare Workers + D1 সংস্করণ (লগইন, অ্যাডমিন অনুমোদন, ক্লাউড সিঙ্ক)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
